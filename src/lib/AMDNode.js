@@ -42,7 +42,7 @@ AMDNode.prototype.isAMDStyle = function(){
   if(defineArguments[0].type !== 'ArrayExpression'){
     return false;
   }
-  return Boolean(defineArguments[1].type === 'FunctionExpression');
+  return /(Arrow)?FunctionExpression/.test(defineArguments[1].type);
 };
 
 /**

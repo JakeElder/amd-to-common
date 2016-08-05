@@ -8,8 +8,8 @@ var _ = require('underscore');
  * @returns {String} The converted content
  */
 module.exports = function convert(content, node){
-  var defineFunction = node.body[0].expression.arguments[0].body;
-  var functionBody = defineFunction.body;
+  var defineFunction = node.expression.arguments[0];
+  var functionBody = defineFunction.body.body;
   var returnStatement = _.find(functionBody, function(node){
     return node.type === 'ReturnStatement';
   });

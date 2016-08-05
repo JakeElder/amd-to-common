@@ -9,7 +9,7 @@ var _ = require('underscore');
  */
 var makeRequireStatement = function(name, identifier){
   if(name){
-    return 'var ' + name + ' = require(\'' + identifier + '\');';
+    return 'const ' + name + ' = require(\'' + identifier + '\');';
   }
   return 'require(\'' + identifier + '\');';
 };
@@ -49,7 +49,7 @@ var addRequireStatement = function(content, amdNode){
   var functionBlockStart = functionNode.body.range[0];
   var defineStart = amdNode.node.range[0];
 
-  var defineString = content.substring(defineStart, argumentsStart);
+  var defineString = content.substring(0, argumentsStart);
   var newDefine = 'function(require, exports, module)';
 
   var blockContent = content.substring(functionBlockStart, content.length);

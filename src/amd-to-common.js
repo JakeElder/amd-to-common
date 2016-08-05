@@ -1,6 +1,6 @@
 var fs = require('fs');
 var _ = require('underscore');
-var esprima = require('esprima');
+var esprima = require('esprima-fb');
 var traverse = require('traverse');
 
 var AMDNode = require('./lib/AMDNode');
@@ -39,6 +39,25 @@ var AMDToCommon = (function(){
     }, this));
   };
 
+  _convert.prototype.getDefineNode = function(content) {
+    var code = esprima.parse(content, this.parseOptions);
+    var amdNodes = traverse(code).reduce(function(memo, node){
+      var amdNode = new AMDNode(node);
+      if(amdNode.isDefine()){
+        memo.push(amdNode);
+      }
+      return memo;
+    }, []);
+    return _.first(amdNodes).node;
+  },
+
+  _convert.prototype.removeWrapper = function(content, defineNode) {
+    var defineLines = content.substring(defineNode.range[0], defineNode.range[1]).split('\n');
+    defineLines = defineLines.slice(1, -1);
+    defineLines = defineLines.map(l => l.replace(/^  /, ''));
+    return content.substring(0, defineNode.range[0]) + defineLines.join('\n') + content.substring(defineNode.range[1], content.length);
+  },
+
   /**
    * Given the contents of a JS source file, parse the source
    * with esprima, then traverse the AST. Convert to common and
@@ -65,12 +84,10 @@ var AMDToCommon = (function(){
 
     var withRequire = requireConverter(content, validNode);
 
-    // Do a second pass of the code now that we've rewritten it
-    var secondPassNode = esprima.parse(withRequire, this.parseOptions);
-    var withExport = exportConverter(withRequire, secondPassNode);
+    var withExport = exportConverter(withRequire, this.getDefineNode(withRequire));
+    var withoutWrapper = this.removeWrapper(withExport, this.getDefineNode(withExport));
 
-    var thirdPassNode = esprima.parse(withExport, this.parseOptions);
-    return strictConverter(withExport, thirdPassNode);
+    return withoutWrapper;
   };
 
   return _convert;

@@ -13,12 +13,13 @@
   "author": "Will Demaine",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "esprima": "^2.5.0",
     "escodegen": "~1.4.1",
-    "underscore": "~1.7.0",
-    "minimist": "~1.1.0",
+    "esprima": "^2.5.0",
+    "esprima-fb": "^15001.1001.0-dev-harmony-fb",
     "glob-all": "~3.0.1",
-    "traverse": "~0.6.6"
+    "minimist": "~1.1.0",
+    "traverse": "~0.6.6",
+    "underscore": "~1.7.0"
   },
   "devDependencies": {
     "tape": "~3.0.1",
